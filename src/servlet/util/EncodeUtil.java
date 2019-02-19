@@ -3,6 +3,7 @@ package servlet.util;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
@@ -29,6 +30,7 @@ public class EncodeUtil {
      * @return String Base64 and AES encoded String
      */
     public static String encode(String keyString, String stringToEncode) throws NullPointerException {
+//        Security.addProvider(new BouncyCastleProvider());
         if (keyString.length() == 0 || keyString == null) {
             throw new NullPointerException("Please give Password");
         }
@@ -73,6 +75,7 @@ public class EncodeUtil {
      * @return desoded String
      */
     public static String decode(String password, String text) throws NullPointerException {
+//        Security.addProvider(new BouncyCastleProvider());
         if (password.length() == 0 || password == null) {
             throw new NullPointerException("Please give Password");
         }
@@ -137,5 +140,4 @@ public class EncodeUtil {
         SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
         return key;
     }
-
 }
