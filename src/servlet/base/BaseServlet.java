@@ -1,9 +1,13 @@
 package servlet.base;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import servlet.model.BaseEncode;
-import servlet.util.*;
+import com.google.gson.JsonObject;
+import servlet.model.BaseEncodeReq;
+import servlet.model.BaseReq;
+import servlet.util.EncodeUtil;
+import servlet.util.JSONUtils;
+import servlet.util.LOG;
+import servlet.util.ParameterUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,7 +23,7 @@ import static servlet.util.ContantUtils.HEAD_KEY_UP_ENCODE;
 public abstract class BaseServlet extends HttpServlet {
     private final String TAG = "BaseServlet";
     //加解密需要的key
-    public static final String AES256_KEY = "ilc2grp9_d3LcMRYJ8BgYsSXuvnQbHbH==";
+    public static final String AES256_KEY = "ilc2grp9_d3LcMRYJ8BgYsSXuvnQbHbH";
 
     @Override
     final protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,14 +39,22 @@ public abstract class BaseServlet extends HttpServlet {
     final protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String json = ParameterUtils.getBodyData(req);
         String upEncode = req.getHeader(HEAD_KEY_UP_ENCODE);
-//        String result = "";
+        String result = "";
         if (ENCODE_VALUE_TRUE.equals(upEncode)) {
             //请求的参数加密
             String encodeParams = encodeParams(json);
-            doPost(encodeParams, resp);
+            result = doPost(encodeParams, resp);
         } else {
-            doPost(json, resp);
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            String dataStr = jsonObject.get("data").toString();
+            LOG.E(TAG, " 数据 非解密 ： " + dataStr);
+            result = doPost(dataStr, resp);
         }
+
+        resp.setContentType("text/html;charset=utf-8"); // 设置响应报文的编码格式(否则中文乱码)
+        PrintWriter pw = resp.getWriter(); // 获取 response 的输出流
+        pw.println(result); // 通过输出流把业务逻辑的结果输出
+        pw.flush();
     }
 
     @Override
@@ -80,13 +92,14 @@ public abstract class BaseServlet extends HttpServlet {
      * @return
      */
     final private String encodeParams(String params) {
-        BaseEncode baseEncode = JSONUtils.getPerson(params, BaseEncode.class);
-        String dataStr = baseEncode.getData();
+        //{"data":"{\"avatar\":\"http://www.pptok.com/wp-content/uploads/2012/08/xunguang-4.jpg\",\"email\":\"40666@qq.com\",\"mcc\":\"86\",\"password\":\"wwwwww\",\"phone\":\"13089897878\",\"username\":\"WANGPENG1\"}"}
+        BaseEncodeReq baseEncodeReq = JSONUtils.getPerson(params, BaseEncodeReq.class);
+        String dataStr = baseEncodeReq.getData();
         String encodeStr = EncodeUtil.decode(AES256_KEY, dataStr);
-        baseEncode.setData(encodeStr);
-        return JSONUtils.toJson(baseEncode);
+        LOG.E(TAG, " 数据 解密 ： " + encodeStr);
+        return encodeStr;
     }
 
-    public abstract void doPost(String reqJson, HttpServletResponse resp) throws IOException;
+    public abstract String doPost(String reqJson, HttpServletResponse resp) throws IOException;
 
 }

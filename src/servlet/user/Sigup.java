@@ -11,11 +11,9 @@ import servlet.util.JDBCUtils;
 import servlet.util.JSONUtils;
 import servlet.util.LOG;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -26,11 +24,11 @@ public class Sigup extends BaseServlet {
     private final String TAG = "SigupReq";
 
     @Override
-    public void doPost(String json, HttpServletResponse resp)  throws   IOException  {
+    public String doPost(String json, HttpServletResponse resp)  throws   IOException  {
         LOG.E(TAG, " 注册 req 数据： " + json);
         SigupReq sigupReq = JSONUtils.fromJson(json, SigupReq.class);
-        String name = sigupReq.getData().getUsername(); // 从 request 中获取名为 account 的参数的值
-        String password = sigupReq.getData().getPassword();
+        String name = sigupReq.getUsername(); // 从 request 中获取名为 account 的参数的值
+        String password = sigupReq.getPassword();
         LOG.E(TAG, " 注册 ： " + "name:" + name + "\n password:" + password);
 
         ResponseModel responseModel = new ResponseModel();
@@ -54,7 +52,7 @@ public class Sigup extends BaseServlet {
                     uuid = uuid.replace("-", "");
 
                     String sql = UserDb.InsertUser();
-                    Object[] params = new Object[]{uuid, sigupReq.getData().getUsername(), sigupReq.getData().getPassword(), sigupReq.getData().getAvatar(), sigupReq.getData().getPhone(), sigupReq.getData().getMcc(), sigupReq.getData().getEmail()};
+                    Object[] params = new Object[]{uuid, sigupReq.getUsername(), sigupReq.getPassword(), sigupReq.getAvatar(), sigupReq.getPhone(), sigupReq.getMcc(), sigupReq.getEmail()};
                     int ren = runner.update(sql, params);
 
                     if (ren != 0) {
@@ -76,11 +74,7 @@ public class Sigup extends BaseServlet {
 
         String res = JSONUtils.toJson(responseModel);
         LOG.E(TAG, " 注册 结果  res ： " + res);
-
-        resp.setContentType("text/html;charset=utf-8"); // 设置响应报文的编码格式(否则中文乱码)
-        PrintWriter pw = resp.getWriter(); // 获取 response 的输出流
-        pw.println(res); // 通过输出流把业务逻辑的结果输出
-        pw.flush();
+        return res;
     }
 
     private UserBean getUser(String name) {

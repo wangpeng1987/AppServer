@@ -1,18 +1,15 @@
 package servlet.util;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Arrays;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * @author WOP
@@ -21,6 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @since 2019/1/16 下午4:30
  */
 public class EncodeUtil {
+    private static final String TAG = "EncodeUtil";
 
     /**
      * Encodes a String in AES-256 with a given key (加密)
@@ -48,6 +46,7 @@ public class EncodeUtil {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivParameterSpec);
             String encrypedValue = Base64.encodeToString(cipher.doFinal(clearText), Base64.DEFAULT);
+            LOG.E(TAG, "encode: " + keyString + " -> " + encrypedValue);
             return encrypedValue;
         } catch (InvalidKeyException e) {
             e.printStackTrace();
@@ -97,7 +96,7 @@ public class EncodeUtil {
             cipher.init(Cipher.DECRYPT_MODE, key, ivParameterSpec);
             byte[] decrypedValueBytes = (cipher.doFinal(encrypedPwdBytes));
             String decrypedValue = new String(decrypedValueBytes);
-            // Log.d("wop", "Decrypted: " + text + " -> " + decrypedValue);
+            LOG.E(TAG, "decode: " + text + " -> " + decrypedValue);
             return decrypedValue;
         } catch (InvalidKeyException e) {
             e.printStackTrace();

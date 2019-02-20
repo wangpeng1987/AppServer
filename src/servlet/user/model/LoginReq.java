@@ -6,42 +6,26 @@ package servlet.user.model;
 public class LoginReq {
 
     /**
-     * data : {"name":"WANG","password":"peng"}
+     * password : wwwwww
+     * username : WANGPENG1
      */
 
-    private DataBean data;
+    private String password;
+    private String username;
 
-    public DataBean getData() {
-        return data;
+    public String getPassword() {
+        return password;
     }
 
-    public void setData(DataBean data) {
-        this.data = data;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public static class DataBean {
-        /**
-         * name : WANG
-         * password : peng
-         */
+    public String getUsername() {
+        return username;
+    }
 
-        private String username;
-        private String password;
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String name) {
-            this.username = name;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

@@ -2,6 +2,7 @@ package servlet.user;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
+import servlet.base.BaseServlet;
 import servlet.model.ResponseModel;
 import servlet.user.db.UserDb;
 import servlet.user.model.LoginReq;
@@ -9,40 +10,24 @@ import servlet.user.model.UserBean;
 import servlet.util.JDBCUtils;
 import servlet.util.JSONUtils;
 import servlet.util.LOG;
-import servlet.util.ParameterUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import static servlet.util.ErrorCodeUtils.*;
 
 @WebServlet(name = "Login", urlPatterns = "/user/login")
-public class Login extends HttpServlet {
+public class Login extends BaseServlet {
     private final String TAG = "Login";
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doDefault(req, resp);
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doDefault(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String json = ParameterUtils.getBodyData(req);
+    public String doPost(String json, HttpServletResponse resp) throws IOException {
         LOG.E(TAG, " 登录 req 数据： " + json);
         LoginReq loginReq = JSONUtils.fromJson(json, LoginReq.class);
-        String name = loginReq.getData().getUsername(); // 从 request 中获取名为 account 的参数的值
-        String password = loginReq.getData().getPassword();
+        String name = loginReq.getUsername(); // 从 request 中获取名为 account 的参数的值
+        String password = loginReq.getPassword();
         LOG.E(TAG, " 登录 ： " + "name:" + name + "\n password:" + password);
 
         ResponseModel responseModel = new ResponseModel();
@@ -80,41 +65,8 @@ public class Login extends HttpServlet {
         }
         responseModel.getError().setMsg(msg);
 
-        String res = JSONUtils.toJson(responseModel).toString();
-        LOG.E(TAG, " 登录 结果  res ： " + res);
-
-        resp.setContentType("text/html;charset=utf-8"); // 设置响应报文的编码格式
-        PrintWriter pw = resp.getWriter(); // 获取 response 的输出流
-        pw.println(res); // 通过输出流把业务逻辑的结果输出
-        pw.flush();
+        String res = JSONUtils.toJson(responseModel);
+        LOG.E(TAG, " 注册 结果  res ： " + res);
+        return res;
     }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doDefault(req, resp);
-    }
-
-    @Override
-    protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doDefault(req, resp);
-    }
-
-    @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doDefault(req, resp);
-    }
-
-    @Override
-    protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doDefault(req, resp);
-    }
-
-    private void doDefault(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String msg = "hello world!";
-        resp.setContentType("text/html;charset=utf-8"); // 设置响应报文的编码格式(否则中文乱码)
-        PrintWriter pw = resp.getWriter(); // 获取 response 的输出流
-        pw.println(msg); // 通过输出流把业务逻辑的结果输出
-        pw.flush();
-    }
-
 }
