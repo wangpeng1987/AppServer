@@ -43,11 +43,12 @@ public class Login extends BaseServlet {
             QueryRunner runner = new QueryRunner(JDBCUtils.getDataSource());
             String sql5 = UserDb.SelectUser(name);
             try {
-                UserBean userBean = runner.query(sql5, new BeanHandler<UserBean>(UserBean.class));
+                UserBean userBean = runner.query(sql5, new BeanHandler<>(UserBean.class));
                 if (userBean != null) {
                     if (password.endsWith(userBean.getPassword())) {
                         msg = "登陆成功！";
                         responseModel.setCode(200);
+                        userBean.setPassword("");
                         responseModel.setData(userBean);
                     } else {
                         responseModel.getError().setCode(CODE_10003);
@@ -66,7 +67,7 @@ public class Login extends BaseServlet {
         responseModel.getError().setMsg(msg);
 
         String res = JSONUtils.toJson(responseModel);
-        LOG.E(TAG, " 注册 结果  res ： " + res);
+        LOG.E(TAG, " 登录 结果  res ： " + res);
         return res;
     }
 }
