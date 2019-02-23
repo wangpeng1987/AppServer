@@ -51,7 +51,6 @@ public abstract class BaseServlet extends HttpServlet {
             result = doPost(dataStr, resp);
         }
 
-        LOG.E(TAG, " 数据 doPost  ： " + result);
         resp.setContentType("text/html;charset=utf-8"); // 设置响应报文的编码格式(否则中文乱码)
         PrintWriter pw = resp.getWriter(); // 获取 response 的输出流
         pw.println(result); // 通过输出流把业务逻辑的结果输出

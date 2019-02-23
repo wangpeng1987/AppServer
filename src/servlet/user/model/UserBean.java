@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 
 public class UserBean {
     @Expose
-    private String token;
+    private String id;
     @Expose
     private String username;
     @Expose
@@ -18,12 +18,12 @@ public class UserBean {
     @Expose
     private String avatar;
 
-    public String getToken() {
-        return token;
+    public String getId() {
+        return id;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUsername() {
