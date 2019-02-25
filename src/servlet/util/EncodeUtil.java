@@ -1,14 +1,11 @@
 package servlet.util;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 import java.util.Arrays;
 
 /**
